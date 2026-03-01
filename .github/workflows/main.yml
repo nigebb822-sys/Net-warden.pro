@@ -9,12 +9,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Android SDK tools
+      - name: Install Android SDK and Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y aidl
+          sudo apt-get install -y openjdk-17-jdk aidl python3-pip
+          pip install --user --upgrade buildozer cython==0.29.33 kivy requests kivymd
       - name: Build with Buildozer
-        uses: ArtemSerebriakov/buildozer-action@v1
+        run: |
+          yes | buildozer init
+          # እዚህ ጋር አፑን እንዲሰራ ያደርገዋል
+          buildozer -v android debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          buildozer_version: stable
-          python_version: 3.11
+          name: NetWarden-APK
+          path: bin/*.apk
+
